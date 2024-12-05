@@ -1,127 +1,177 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | Dicey Chess</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=540 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Flip for Cake | Ibrahim Özhan</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+      <style>
+         body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #181818;
+            color: #e0e0e0;
+         }
+         .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+         }
+         header {
+            text-align: center;
+            padding: 50px 0;
+            background: linear-gradient(to bottom, #1e3c72, #2a5298);
+            color: #ffffff;
+         }
+         header h1 {
+            margin: 0;
+            font-size: 4em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+         }
+         nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 1.2em;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+         }
+         nav a:hover {
+            background-color: #ffffff;
+            color: #121212;
+            border-radius: 5px;
+         }
+         section h2 {
+            text-align: center;
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+         }
+         footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #333333;
+         }
+         a {
+            color: #1e90ff;
+            text-decoration: none;
+         }
+         a:hover {
+            color: #63b8ff;
+            text-decoration: underline;
+         }
+         #unity-container {
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+         }
+         canvas {
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+         }
+         #unity-footer div {
+            margin: 5px;
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container">
+         <header>
+            <h1>Flip for Cake</h1>
+            <nav>
+               <a href="#about">About Me</a>
+               <a href="#portfolio">Portfolio</a>
+               <a href="#contact">Contact</a>
+            </nav>
+         </header>
+         <section>
+            <h2>Play the Game</h2>
+            <div id="unity-container">
+               <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+               <div id="unity-loading-bar">
+                  <div id="unity-logo"></div>
+                  <div id="unity-progress-bar-empty">
+                     <div id="unity-progress-bar-full"></div>
+                  </div>
+               </div>
+               <div id="unity-warning"></div>
+               <div id="unity-footer">
+                  <div id="unity-build-title">Flip for Cake</div>
+                  <div id="unity-fullscreen-button"><i class="fas fa-expand"></i> Fullscreen</div>
+               </div>
+            </div>
+         </section>
+         <footer>
+            <p>&copy; 2024 Ibrahim Özhan</p>
+            <a href="#top" class="back-to-top">Back to Top</a>
+         </footer>
       </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Dicey Chess</div>
-      </div>
-    </div>
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
-
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
+      <script>
+         var canvas = document.querySelector("#unity-canvas");
+         function unityShowBanner(msg, type) {
+            var warningBanner = document.querySelector("#unity-warning");
+            function updateBannerVisibility() {
+               warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+            }
+            var div = document.createElement('div');
+            div.innerHTML = msg;
+            warningBanner.appendChild(div);
+            div.style = type === 'error' ? 'background: red; padding: 10px;' : 'background: yellow; padding: 10px;';
+            if (type !== 'error') {
+               setTimeout(() => {
+                  warningBanner.removeChild(div);
+                  updateBannerVisibility();
+               }, 5000);
+            }
             updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
+         }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/4.0.0_4.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/4.0.0_4.data",
-        frameworkUrl: buildUrl + "/4.0.0_4.framework.js",
-        codeUrl: buildUrl + "/4.0.0_4.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Ibrahim Oezhan",
-        productName: "Dicey Chess",
-        productVersion: "4.0.0",
-        showBanner: unityShowBanner,
-      };
+         var buildUrl = "Build";
+         var loaderUrl = buildUrl + "/Flip for Cake.loader.js";
+         var config = {
+            arguments: [],
+            dataUrl: buildUrl + "/Flip for Cake.data.br",
+            frameworkUrl: buildUrl + "/Flip for Cake.framework.js.br",
+            codeUrl: buildUrl + "/Flip for Cake.wasm.br",
+            companyName: "Ibrahim Oezhan",
+            productName: "Flip for Cake",
+            productVersion: "1.0.0",
+            showBanner: unityShowBanner
+         };
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
+         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, initial-scale=1.0, user-scalable=no';
+            document.head.appendChild(meta);
+            document.querySelector("#unity-container").className = "unity-mobile";
+            canvas.className = "unity-mobile";
+         } else {
+            canvas.style.width = "960px";
+            canvas.style.height = "600px";
+         }
 
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "540px";
-      }
-
-      document.querySelector("#unity-loading-bar").style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
+         document.querySelector("#unity-loading-bar").style.display = "block";
+         var script = document.createElement("script");
+         script.src = loaderUrl;
+         script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+               document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+               document.querySelector("#unity-loading-bar").style.display = "none";
+               document.querySelector("#unity-fullscreen-button").onclick = () => {
                   unityInstance.SetFullscreen(1);
-                };
-
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
-    </script>
-  </body>
+               };
+            }).catch((message) => {
+               alert(message);
+            });
+         };
+         document.body.appendChild(script);
+      </script>
+   </body>
 </html>
